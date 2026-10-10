@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>气味叙事 · 把记忆调成香</title>
+<meta name="description" content="气味叙事 · DIY 调香。选一个故事，挑几支香材，调出只属于你的气味。">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+<!-- ============ 导航 ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <a href="#/" class="logo">气味<span>叙事</span></a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#/" data-view="home">首页</a>
+      <a href="#/workshop" data-view="workshop">调香工坊</a>
+      <a href="#/recipes" data-view="recipes">我的配方</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ==================== 首页 ==================== -->
+<section class="view" id="view-home">
+
+  <div class="hero">
+    <div class="container hero-grid">
+      <div>
+        <span class="hero-tag">DIY 调香 · 手作香氛</span>
+        <h1>把记忆<em>调成香</em></h1>
+        <p class="lead">
+          有些气味，比照片更接近记忆。<br>
+          外婆厨房里的橙皮、雨后书店的纸页、冬日壁炉的余温——<br>
+          气味叙事，陪你把这些片段，调成只属于你的气味。
+        </p>
+        <div class="hero-actions">
+          <a href="#/workshop" class="btn">开始调香</a>
+          <a href="#kit" class="btn ghost">先看看新手套装</a>
+        </div>
+        <p class="hero-note">已为 3,827 位用户生成专属配方</p>
+      </div>
+      <div class="hero-visual">
+        <div class="flacon">
+          <i class="f-base" style="height:42%"></i>
+          <i class="f-mid"  style="height:28%"></i>
+          <i class="f-top"  style="height:18%"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>三步，写出你的气味故事</h2>
+        <p>不需要懂香调，跟着感觉走就好。</p>
+      </div>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <h3>选一个故事</h3>
+          <p>先不用想香调。告诉我们，你想留住的是哪个瞬间。<br>治愈、清醒、浪漫、安静、温暖、自由。</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <h3>挑三种香材</h3>
+          <p>前调是第一句话，中调是故事本身，后调是读完后的余温。从香材图书馆里，挑出你心动的那几支。</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <h3>调出你的比例</h3>
+          <p>拖动滑块，看香气如何变化。<br>比例不用完美，像你，就够了。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <h2>不知道从哪开始？先看看他们的故事</h2>
+        <p>点击任意一条，可以载入调香工坊继续修改。</p>
+      </div>
+      <div class="recipe-grid" id="hotRecipes"></div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="container">
+      <div class="section-head">
+        <h2>每一支，都是一个没说出口的故事</h2>
+      </div>
+      <div class="wall" id="recipeWall"></div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="container">
+      <div class="kit" id="kit">
+        <div>
+          <h2>第一次调香？从这一盒开始</h2>
+          <ul class="kit-list">
+            <li>前调香材 3 支 · 中调香材 3 支 · 后调香材 3 支</li>
+            <li>基础基底 30ml · 空瓶 2 个 · 滴管 2 支</li>
+            <li>试香纸 20 张 · 手写配方卡</li>
+            <li>调香入门手册</li>
+          </ul>
+          <div class="kit-price">¥298<small>含代调成品服务</small></div>
+          <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+            <a href="#/workshop" class="btn">带一盒回家</a>
+            <span style="align-self:center;font-size:13px;color:var(--muted);">
+              下单后填写配方，我们按你的配方代调
+            </span>
+          </div>
+        </div>
+        <div class="kit-visual">新手调香套装</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="padding-top:0">
+    <div class="container story">
+      <div class="section-head">
+        <h2>为什么叫气味叙事</h2>
+      </div>
+      <p>照片会褪色，文字会遗忘，但气味不会。</p>
+      <p>它藏在鼻腔最深处，等某一个瞬间被打开——然后你会突然想起，那天的风，那个人，那句话。</p>
+      <p>我们相信，每个人都有一段值得被留住的记忆。<br>气味叙事做的，只是帮你把它调出来。</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ==================== 调香工坊 ==================== -->
+<section class="view" id="view-workshop">
+  <div class="container">
+
+    <div class="workshop-head">
+      <div>
+        <h1>调香工坊</h1>
+        <div class="sub">选一个故事，挑几支香材，调出你的比例。</div>
+      </div>
+      <div class="step-indicator" id="stepIndicator">第 1 步 / 共 3 步</div>
+    </div>
+
+    <div class="workshop-layout">
+      <div class="workshop-main">
+
+        <div class="block">
+          <div class="block-title"><span class="badge">1</span>选一个故事</div>
+          <div class="moods" id="moods"></div>
+        </div>
+
+        <div class="block">
+          <div class="block-title"><span class="badge">2</span>挑香材</div>
+          <div class="tabs" id="tabs">
+            <button class="tab active" data-type="top">前调</button>
+            <button class="tab" data-type="mid">中调</button>
+            <button class="tab" data-type="base">后调</button>
+          </div>
+          <div class="scents" id="scents"></div>
+        </div>
+
+        <div class="block">
+          <div class="block-title"><span class="badge">3</span>调出你的比例</div>
+          <div id="formulaArea">
+            <div class="empty-tip">
+              还没有选香材<br>
+              去上面挑几支，开始你的气味叙事
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <aside class="workshop-side">
+
+        <div class="panel">
+          <div class="panel-title">香调金字塔</div>
+          <div class="pyramid">
+            <div class="py-bar py-top"  id="pyTop">前调 0%</div>
+            <div class="py-bar py-mid"  id="pyMid">中调 0%</div>
+            <div class="py-bar py-base" id="pyBase">后调 0%</div>
+          </div>
+          <div class="bottle-wrap">
+            <div class="bottle" id="bottle"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">浓度</div>
+          <div class="conc" id="conc">
+            <button data-v="香氛 8%">香氛</button>
+            <button data-v="EDT 12%" class="active">EDT</button>
+            <button data-v="EDP 18%">EDP</button>
+          </div>
+
+          <div class="panel-title" style="margin-top:22px;">配方命名</div>
+          <input type="text" class="field" id="recipeName"
+                 placeholder="给它起个名字，比如《雨后书店》" maxlength="16">
+
+          <button class="btn block" id="genBtn" style="margin-top:20px;" disabled>
+            生成我的配方卡
+          </button>
+        </div>
+
+      </aside>
+    </div>
+
+    <div class="recipe-card" id="card" style="display:none;">
+      <div class="code" id="cardCode">No. 0000</div>
+      <h3 id="cardName">《未命名》</h3>
+      <div class="rows" id="cardRows"></div>
+      <div class="meta" id="cardMeta"></div>
+      <div class="card-actions">
+        <button class="btn" id="saveBtn">保存到我的配方</button>
+        <button class="btn ghost" id="cartBtn">加入购物车 · 由我们代调</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== 我的配方 ==================== -->
+<section class="view" id="view-recipes">
+  <div class="container">
+    <div class="section-head" style="padding-top:56px;">
+      <h2>我的配方</h2>
+      <p>保存下来的气味故事，都在这里。</p>
+    </div>
+    <div id="myRecipesArea"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>气味叙事</h4>
+        <p>把记忆调成香</p>
+      </div>
+      <div class="footer-links">
+        <a href="#/workshop">调香工坊</a>
+        <a href="#/">首页</a>
+        <a href="#/recipes">我的配方</a>
+      </div>
+    </div>
+    <div class="footer-note">
+      本产品为化妆品，请置于阴凉处保存。孕妇及未成年人慎用。<br>
+      成分符合 IFRA 及化妆品禁限用要求 · 客服微信：xxx
+    </div>
+  </div>
+</footer>
+
+<script src="./js/data.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
