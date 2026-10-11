@@ -293,6 +293,41 @@
   /* ---------- 生成配方卡 ---------- */
   let currentCard = null;
 
+/* ---------- 归零工坊状态 ---------- */
+function resetWorkshopState() {
+  state.mood = '';
+  state.currentTab = 'top';
+  state.selected = [];
+  state.conc = 'EDT 12%';
+  currentCard = null;
+
+  // 清空配方命名输入框
+  const nameInput = document.getElementById('recipeName');
+  if (nameInput) nameInput.value = '';
+
+  // 隐藏配方卡
+  const card = document.getElementById('card');
+  if (card) card.style.display = 'none';
+
+  // Tab 回到前调
+  document.querySelectorAll('#tabs .tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.type === 'top');
+  });
+
+  // 浓度回到 EDT
+  document.querySelectorAll('#conc button').forEach(b => {
+    b.classList.toggle('active', b.dataset.v === 'EDT 12%');
+  });
+}
+
+/* ---------- 渲染工坊（统一入口） ---------- */
+function renderWorkshop() {
+  renderMoods();
+  renderScents();
+  renderFormula();
+  updateStep();
+}
+
   function generateCard() {
     if (state.selected.length === 0) {
       alert('请先选择香材');
