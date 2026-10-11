@@ -1163,11 +1163,9 @@ function renderWorkshop() {
      ========================================================= */
 
    function init() {
-  const kitPriceEl = document.getElementById('kitPrice');
-  if (kitPriceEl) kitPriceEl.textContent = PRICE;
-
   renderHome();
-  renderWorkshop();          // 替换原来的 4 行
+  renderProducts();          // 新增
+  renderWorkshop();
   updateAuthUI();
   renderNavUser();
   renderNavLinks();
