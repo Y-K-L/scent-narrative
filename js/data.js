@@ -1,6 +1,5 @@
 /* =========================================================
-   气味叙事 · 静态数据
-   全部挂在 window 上，供 app.js 使用
+   气味叙事 · 静态香材数据
    ========================================================= */
 
 window.SCENTS = {
@@ -30,8 +29,8 @@ window.SCENTS = {
   ]
 };
 
-window.TYPE_LABEL   = { top:'前调', mid:'中调', base:'后调' };
-window.LAYER_COLOR  = { top:'#E0B15C', mid:'#C97B5A', base:'#8B6A4A' };
+window.TYPE_LABEL  = { top:'前调', mid:'中调', base:'后调' };
+window.LAYER_COLOR = { top:'#E0B15C', mid:'C97B5A', base:'#8B6A4A' };
 
 window.MOODS = ['治愈','清醒','浪漫','安静','温暖','自由'];
 
@@ -62,4 +61,5 @@ window.WALL = [
   ['周五晚上',493],['一个人的房间',512]
 ];
 
-window.STORAGE_KEY = 'scent_narrative_recipes';
+/* 商品价格（本 Demo 固定价） */
+window.PRICE = 198;
