@@ -1014,4 +1014,53 @@
       tab.addEventListener('click', () => {
         authRole = tab.dataset.role;
         authMode = 'login';
-        $$('.auth-tab').forEach(t => t.classList.toggle('active', t ===
+        $$('.auth-tab').forEach(t => t.classList.toggle('active', t === tab));
+        $('#authForm').reset();
+        hideAuthMsg();
+        updateAuthUI();
+      });
+    });
+    $('#authForm').addEventListener('submit', submitAuth);
+
+    /* 新增地址 */
+    $('#addressForm').addEventListener('submit', submitAddress);
+
+    /* 管理后台 Tabs */
+    $('#adminTabs').addEventListener('click', e => {
+      const btn = e.target.closest('.admin-tab');
+      if (!btn) return;
+      adminTab = btn.dataset.tab;
+      renderAdmin();
+    });
+
+    /* 弹窗关闭 */
+    $('#modalMask').addEventListener('click', e => {
+      if (e.target === $('#modalMask')) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
+
+  /* =========================================================
+     启动
+     ========================================================= */
+  function init() {
+    renderHome();
+    renderMoods();
+    renderScents();
+    renderFormula();
+    updateStep();
+    updateAuthUI();
+    renderNavUser();
+    renderNavLinks();
+    bindEvents();
+    route();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
