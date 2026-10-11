@@ -39,7 +39,7 @@
 
   function route() {
     let hash = (location.hash.replace('#', '').replace('/', '') || 'home');
-    if (hash.indexOf('kit') === 0) hash = 'home';
+   /* if (hash.indexOf('kit') === 0) hash = 'home';*/
     if (VIEWS.indexOf(hash) === -1) hash = 'home';
 
     /* --- 权限守卫 --- */
@@ -1047,6 +1047,25 @@ function renderWorkshop() {
      事件绑定
      ========================================================= */
   function bindEvents() {
+
+     /* 首页「先看看新手套装」滚动到产品区 */
+    const scrollBtn = document.getElementById('scrollToKit');
+    if (scrollBtn) {
+      scrollBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        // 确保回到首页视图
+        if (location.hash !== '#/' && location.hash !== '') {
+          location.hash = '#/';
+        }
+        // 等视图切换完成再滚动
+        setTimeout(() => {
+          const kit = document.getElementById('kit');
+          if (kit) {
+            kit.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 80);
+      });
+    }
 
     /* 情绪 */
     $('#moods').addEventListener('click', e => {
