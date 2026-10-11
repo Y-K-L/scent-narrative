@@ -35,6 +35,8 @@
     admin:   'admin'
   };
 
+   let skipResetOnce = false;
+
   function route() {
     let hash = (location.hash.replace('#', '').replace('/', '') || 'home');
     if (hash.indexOf('kit') === 0) hash = 'home';
@@ -63,8 +65,15 @@
     $$('#navLinks a').forEach(a => {
       a.classList.toggle('active', a.dataset.view === hash);
     });
-
-    /* --- 按需渲染 --- */
+     /* --- 按需渲染 --- */
+    if (hash === 'workshop') {
+      if (skipResetOnce) {
+        skipResetOnce = false;   // 热门配方载入，不重置
+      } else {
+        resetWorkshopState();    // 每次进入都归零
+      }
+      renderWorkshop();
+    }
     if (hash === 'recipes') renderMyRecipes();
     if (hash === 'orders')  renderMyOrders();
     if (hash === 'address') renderMyAddresses();
@@ -391,33 +400,34 @@ function renderWorkshop() {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
-  /* ---------- 载入热门配方 ---------- */
-  function loadHotRecipe(r) {
-    state.selected = [];
-    state.mood = r.mood || '';
-    state.currentTab = 'top';
+   function loadHotRecipe(r) {
+  skipResetOnce = true;
 
-    ['top', 'mid', 'base'].forEach(type => {
-      (r.notes[type] || []).forEach(([name, pct]) => {
-        const base = SCENTS[type].find(s => s.name === name);
-        if (base) {
-          state.selected.push(Object.assign({}, base, { type: type, value: pct }));
-        }
-      });
+  // 手动装载热门配方（跳过自动归零）
+  resetWorkshopState();
+  state.mood = r.mood || '';
+  state.currentTab = 'top';
+
+  ['top', 'mid', 'base'].forEach(type => {
+    (r.notes[type] || []).forEach(([name, pct]) => {
+      const base = SCENTS[type].find(s => s.name === name);
+      if (base) {
+        state.selected.push(Object.assign({}, base, { type: type, value: pct }));
+      }
     });
+  });
 
-    $('#recipeName').value = r.name;
+  const nameInput = document.getElementById('recipeName');
+  if (nameInput) nameInput.value = r.name;
+
+  // 已经在工坊页时，hash 不变，需要手动渲染
+  if (location.hash === '#/workshop') {
+    skipResetOnce = false;
+    renderWorkshop();
+  } else {
     location.hash = '#/workshop';
-
-    setTimeout(() => {
-      renderMoods();
-      $$('#tabs .tab').forEach(t =>
-        t.classList.toggle('active', t.dataset.type === state.currentTab));
-      renderScents();
-      renderFormula();
-      updateStep();
-    }, 60);
   }
+}
 
   /* =========================================================
      登录 / 注册
@@ -1075,27 +1085,38 @@ function renderWorkshop() {
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') closeModal();
     });
+     /* 「开始调香」/「调香工坊」等链接，已在工坊页时手动归零 */
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href="#/workshop"]');
+      if (!link) return;
+
+      // 已经在工坊页，hash 不变，hashchange 不触发
+      if (location.hash === '#/workshop') {
+        skipResetOnce = false;
+        resetWorkshopState();
+        renderWorkshop();
+      }
+      // 从其他页面进入时，route() 会处理
+    });
   }
 
   /* =========================================================
      启动
      ========================================================= */
-  function init() {
-  // 价格集中渲染
+
+   function init() {
   const kitPriceEl = document.getElementById('kitPrice');
   if (kitPriceEl) kitPriceEl.textContent = PRICE;
 
   renderHome();
-  renderMoods();
-  renderScents();
-  renderFormula();
-  updateStep();
+  renderWorkshop();          // 替换原来的 4 行
   updateAuthUI();
   renderNavUser();
   renderNavLinks();
   bindEvents();
   route();
 }
+  
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
