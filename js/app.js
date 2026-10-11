@@ -7,7 +7,7 @@
 
   const {
     SCENTS, TYPE_LABEL, LAYER_COLOR, MOODS,
-    HOT_RECIPES, WALL, PRICE
+    HOT_RECIPES, WALL, PRICE, PRODUCTS
   } = window;
   const { Auth, Recipes, Addresses, Orders, Users, uid } = window.Store;
 
@@ -158,6 +158,24 @@
       <div class="wall-chip">《${esc(name)}》<small>No. ${code}</small></div>
     `).join('');
   }
+
+   /* =========================================================
+   产品列表渲染
+   ========================================================= */
+function renderProducts() {
+  const grid = $('#productGrid');
+  if (!grid) return;
+
+  grid.innerHTML = PRODUCTS.map(p => `
+    <div class="product-card" data-id="${p.id}">
+      ${p.badge ? `<span class="badge-tag">${esc(p.badge)}</span>` : ''}
+      <h3>${esc(p.name)}</h3>
+      <p class="p-desc">${esc(p.desc)}</p>
+      <div class="p-price">¥${p.price}<small>${esc(p.note || '')}</small></div>
+      <a href="#/workshop" class="btn">开始调香</a>
+    </div>
+  `).join('');
+}
 
   /* =========================================================
      调香工坊
@@ -611,6 +629,7 @@ function renderWorkshop() {
           <div class="order-status ${orderStatusClass(o.status)}">${esc(o.status)}</div>
         </div>
         <div class="order-body">
+          <div class="row"><b>产品</b>${esc(o.product ? o.product.name : '新手调香套装')}</div>
           <div class="row"><b>配方</b>《${esc(o.recipe.name)}》 ${esc(o.recipe.code)}</div>
           ${o.recipe.rows.map(r => `
             <div class="row"><b>${r.label}</b>${esc(r.text)}</div>
@@ -721,107 +740,144 @@ function renderWorkshop() {
   }
 
   function openOrderModal(recipe) {
-    const u = Auth.currentUser();
-    if (!u) {
-      sessionStorage.setItem('sn_redirect', location.hash);
-      location.hash = '#/login';
-      return;
-    }
-
-    const addrs = Addresses.byUser(u.id);
-    if (addrs.length === 0) {
-      if (confirm('还没有收货地址，去添加吗？')) {
-        location.hash = '#/address';
-      }
-      return;
-    }
-
-    const def = addrs.find(a => a.isDefault) || addrs[0];
-    const addrHtml = addrs.map(a => `
-      <label class="${a.id === def.id ? 'active' : ''}">
-        <input type="radio" name="orderAddr" value="${a.id}"
-               ${a.id === def.id ? 'checked' : ''}>
-        <div>
-          <div>
-            <span class="nm">${esc(a.name)}</span>
-            <span class="ph">${esc(a.phone)}</span>
-            ${a.isDefault ? '<span class="tag-default">默认</span>' : ''}
-          </div>
-          <div class="full">${esc(a.province)} ${esc(a.city)} ${esc(a.district)} ${esc(a.detail)}</div>
-        </div>
-      </label>
-    `).join('');
-
-    openModal(`
-      <h3>确认下单</h3>
-      <div class="sub">我们按你的配方代调成品，7 天内发货。</div>
-
-      <div class="panel-title">配方</div>
-      <div style="font-size:14px;margin-bottom:6px;">
-        《${esc(recipe.name)}》 <span style="color:var(--muted);font-size:12.5px;">${esc(recipe.code)}</span>
-      </div>
-      ${recipe.rows.map(r => `
-        <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">
-          <b style="color:var(--ink);margin-right:8px;">${r.label}</b>${esc(r.text)}
-        </div>
-      `).join('')}
-
-      <div class="panel-title" style="margin-top:24px;">收货地址</div>
-      <div class="addr-pick" id="addrPick">${addrHtml}</div>
-
-      <div class="order-foot" style="border-top:1px dashed var(--line);padding-top:16px;margin-top:0;">
-        <span style="font-size:13.5px;color:var(--muted);">合计</span>
-        <span class="order-amount">¥${PRICE}</span>
-      </div>
-
-      <div class="modal-actions">
-        <button type="button" class="btn ghost" id="cancelOrder">取消</button>
-        <button type="button" class="btn" id="confirmOrder">确认下单</button>
-      </div>
-    `);
-
-    // 地址选中高亮
-    $('#addrPick').addEventListener('change', e => {
-      if (e.target.name !== 'orderAddr') return;
-      $$('#addrPick label').forEach(l => l.classList.remove('active'));
-      e.target.closest('label').classList.add('active');
-    });
-
-    $('#cancelOrder').onclick = closeModal;
-
-    $('#confirmOrder').onclick = () => {
-      const picked = $('#addrPick input[name="orderAddr"]:checked');
-      if (!picked) { alert('请选择收货地址'); return; }
-
-      const addr = Addresses.byUser(u.id).find(a => a.id === picked.value);
-      if (!addr) { alert('地址不存在'); return; }
-
-      const order = {
-        id: uid('o'),
-        userId: u.id,
-        recipeId: recipe.id || null,
-        recipe: {
-          code: recipe.code,
-          name: recipe.name,
-          rows: recipe.rows,
-          meta: recipe.meta
-        },
-        amount: PRICE,
-        status: '待处理',
-        address: {
-          name: addr.name,
-          phone: addr.phone,
-          full: `${addr.province} ${addr.city} ${addr.district} ${addr.detail}`
-        },
-        createdAt: new Date().toISOString()
-      };
-
-      Orders.add(order);
-      closeModal();
-      alert('下单成功，可在「我的订单」查看');
-      location.hash = '#/orders';
-    };
+  const u = Auth.currentUser();
+  if (!u) {
+    sessionStorage.setItem('sn_redirect', location.hash);
+    location.hash = '#/login';
+    return;
   }
+
+  const addrs = Addresses.byUser(u.id);
+  if (addrs.length === 0) {
+    if (confirm('还没有收货地址，去添加吗？')) {
+      location.hash = '#/address';
+    }
+    return;
+  }
+
+  const def = addrs.find(a => a.isDefault) || addrs[0];
+
+  /* --- 产品选择 --- */
+  const prodHtml = PRODUCTS.map((p, i) => `
+    <label class="${i === 0 ? 'active' : ''}">
+      <input type="radio" name="orderProduct" value="${p.id}"
+             ${i === 0 ? 'checked' : ''}>
+      <div style="flex:1;">
+        <div>
+          <span class="nm">${esc(p.name)}</span>
+          <span class="ph" style="color:var(--clay);font-weight:600;">¥${p.price}</span>
+        </div>
+        <div class="full">${esc(p.desc)}</div>
+      </div>
+    </label>
+  `).join('');
+
+  /* --- 地址选择 --- */
+  const addrHtml = addrs.map(a => `
+    <label class="${a.id === def.id ? 'active' : ''}">
+      <input type="radio" name="orderAddr" value="${a.id}"
+             ${a.id === def.id ? 'checked' : ''}>
+      <div>
+        <div>
+          <span class="nm">${esc(a.name)}</span>
+          <span class="ph">${esc(a.phone)}</span>
+          ${a.isDefault ? '<span class="tag-default">默认</span>' : ''}
+        </div>
+        <div class="full">${esc(a.province)} ${esc(a.city)} ${esc(a.district)} ${esc(a.detail)}</div>
+      </div>
+    </label>
+  `).join('');
+
+  openModal(`
+    <h3>确认下单</h3>
+    <div class="sub">我们按你的配方代调成品，7 天内发货。</div>
+
+    <div class="panel-title">选择产品</div>
+    <div class="addr-pick" id="prodPick">${prodHtml}</div>
+
+    <div class="panel-title">配方</div>
+    <div style="font-size:14px;margin-bottom:6px;">
+      《${esc(recipe.name)}》 <span style="color:var(--muted);font-size:12.5px;">${esc(recipe.code)}</span>
+    </div>
+    ${recipe.rows.map(r => `
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">
+        <b style="color:var(--ink);margin-right:8px;">${r.label}</b>${esc(r.text)}
+      </div>
+    `).join('')}
+
+    <div class="panel-title" style="margin-top:24px;">收货地址</div>
+    <div class="addr-pick" id="addrPick">${addrHtml}</div>
+
+    <div class="order-foot" style="border-top:1px dashed var(--line);padding-top:16px;margin-top:0;">
+      <span style="font-size:13.5px;color:var(--muted);">合计</span>
+      <span class="order-amount" id="orderTotal">¥${PRODUCTS[0].price}</span>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn ghost" id="cancelOrder">取消</button>
+      <button type="button" class="btn" id="confirmOrder">确认下单</button>
+    </div>
+  `);
+
+  /* --- 产品切换 --- */
+  let selectedProductId = PRODUCTS[0].id;
+  $('#prodPick').addEventListener('change', e => {
+    if (e.target.name !== 'orderProduct') return;
+    $$('#prodPick label').forEach(l => l.classList.remove('active'));
+    e.target.closest('label').classList.add('active');
+    selectedProductId = e.target.value;
+    const p = PRODUCTS.find(x => x.id === selectedProductId);
+    if (p) $('#orderTotal').textContent = '¥' + p.price;
+  });
+
+  /* --- 地址切换 --- */
+  $('#addrPick').addEventListener('change', e => {
+    if (e.target.name !== 'orderAddr') return;
+    $$('#addrPick label').forEach(l => l.classList.remove('active'));
+    e.target.closest('label').classList.add('active');
+  });
+
+  $('#cancelOrder').onclick = closeModal;
+
+  $('#confirmOrder').onclick = () => {
+    const pickedAddr = $('#addrPick input[name="orderAddr"]:checked');
+    if (!pickedAddr) { alert('请选择收货地址'); return; }
+
+    const product = PRODUCTS.find(x => x.id === selectedProductId);
+    const addr = Addresses.byUser(u.id).find(a => a.id === pickedAddr.value);
+    if (!product || !addr) { alert('数据异常，请重试'); return; }
+
+    const order = {
+      id: uid('o'),
+      userId: u.id,
+      recipeId: recipe.id || null,
+      product: {
+        id: product.id,
+        name: product.name,
+        price: product.price
+      },
+      recipe: {
+        code: recipe.code,
+        name: recipe.name,
+        rows: recipe.rows,
+        meta: recipe.meta
+      },
+      amount: product.price,
+      status: '待处理',
+      address: {
+        name: addr.name,
+        phone: addr.phone,
+        full: `${addr.province} ${addr.city} ${addr.district} ${addr.detail}`
+      },
+      createdAt: new Date().toISOString()
+    };
+
+    Orders.add(order);
+    closeModal();
+    alert('下单成功，可在「我的订单」查看');
+    location.hash = '#/orders';
+  };
+}
 
   /* =========================================================
      管理后台
@@ -857,6 +913,7 @@ function renderWorkshop() {
               <th>订单号</th>
               <th>用户</th>
               <th>配方</th>
+              <th>产品</th>
               <th>收货人 / 地址</th>
               <th>金额</th>
               <th>状态</th>
@@ -875,6 +932,7 @@ function renderWorkshop() {
                     《${esc(o.recipe.name)}》<br>
                     <span style="color:var(--muted);font-size:12px;">${esc(o.recipe.code)}</span>
                   </td>
+                  <td>${esc(o.product ? o.product.name : '—')}</td>
                   <td>
                     ${esc(o.address.name)} ${esc(o.address.phone)}<br>
                     <span style="color:var(--muted);font-size:12.5px;">${esc(o.address.full)}</span>
