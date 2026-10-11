@@ -1046,17 +1046,21 @@
      启动
      ========================================================= */
   function init() {
-    renderHome();
-    renderMoods();
-    renderScents();
-    renderFormula();
-    updateStep();
-    updateAuthUI();
-    renderNavUser();
-    renderNavLinks();
-    bindEvents();
-    route();
-  }
+  // 价格集中渲染
+  const kitPriceEl = document.getElementById('kitPrice');
+  if (kitPriceEl) kitPriceEl.textContent = PRICE;
+
+  renderHome();
+  renderMoods();
+  renderScents();
+  renderFormula();
+  updateStep();
+  updateAuthUI();
+  renderNavUser();
+  renderNavLinks();
+  bindEvents();
+  route();
+}
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
