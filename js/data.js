@@ -62,4 +62,4 @@ window.WALL = [
 ];
 
 /* 商品价格（本 Demo 固定价） */
-window.PRICE = 198;
+window.PRICE = 298;
